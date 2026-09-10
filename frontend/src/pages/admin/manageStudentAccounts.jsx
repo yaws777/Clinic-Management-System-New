@@ -17,7 +17,7 @@ import {
 } from 'lucide-react';
 import '../../styles/admin/ManageStudentAccounts.css';
 
-const API_BASE = 'http://localhost:3001/api';
+const API_BASE = 'https://clinic-management-system-new.onrender.com/api';
 
 export default function ManageStudentAccounts() {
   const [students, setStudents] = useState([]);

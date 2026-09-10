@@ -22,11 +22,11 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "vite build",
+    "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "dev": "vite",
-    "preview": "vite preview"
+    "dev": "react-scripts dev",
+    "preview": "react-scripts preview"
   },
   "eslintConfig": {
     "extends": [

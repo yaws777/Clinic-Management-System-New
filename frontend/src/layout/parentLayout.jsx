@@ -39,7 +39,7 @@ const ParentLayout = () => {
         const fetchProfiles = async (userId) => {
             try {
                 // 1. Fetch Parent Data
-                const parentRes = await fetch(`http://localhost:3001/api/get-parent/${userId}`);
+                const parentRes = await fetch(`https://clinic-management-system-new.onrender.com/api/get-parent/${userId}`);
                 const parentJson = await parentRes.json();
 
                 if (parentJson.success && parentJson.parent) {
@@ -51,7 +51,7 @@ const ParentLayout = () => {
                 // 2. Fetch Selected Child Data
                 const selectedStudentId = localStorage.getItem('selectedStudentId');
                 if (selectedStudentId) {
-                    const childRes = await fetch(`http://localhost:3001/api/get-student-by-studentId/${selectedStudentId}`);
+                    const childRes = await fetch(`https://clinic-management-system-new.onrender.com/api/get-student-by-studentId/${selectedStudentId}`);
                     const childJson = await childRes.json();
                     
                     if (childJson.success && childJson.student) {

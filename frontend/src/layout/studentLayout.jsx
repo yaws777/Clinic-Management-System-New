@@ -28,7 +28,7 @@ const StudentLayout = () => {
     const fetchUnreadCount = useCallback(async (userId) => {
         if (!userId) return;
         try {
-            const res = await fetch(`http://localhost:3001/api/messages/unread-count/${userId}`);
+            const res = await fetch(`https://clinic-management-system-new.onrender.com/api/messages/unread-count/${userId}`);
             const data = await res.json();
             if (data.success) {
                 setUnreadCount(data.unreadCount || 0);
@@ -41,7 +41,7 @@ const StudentLayout = () => {
     useEffect(() => {
         const fetchStudentProfile = async (userId) => {
             try {
-                const response = await fetch(`http://localhost:3001/api/get-student/${userId}`);
+                const response = await fetch(`https://clinic-management-system-new.onrender.com/api/get-student/${userId}`);
                 const data = await response.json();
 
                 if (data.success && data.student) {

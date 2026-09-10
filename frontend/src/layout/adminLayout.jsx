@@ -18,7 +18,7 @@ const AdminLayout = () => {
     useEffect(() => {
         const fetchAdminProfile = async (userId) => {
             try {
-                const response = await fetch(`http://localhost:3001/api/get-admin/${userId}`);
+                const response = await fetch(`https://clinic-management-system-new.onrender.com/api/get-admin/${userId}`);
                 const data = await response.json();
 
                 if (data.success && data.admin) {

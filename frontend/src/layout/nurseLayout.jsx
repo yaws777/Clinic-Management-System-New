@@ -20,7 +20,7 @@ const NurseLayout = () => {
 
     const fetchUnreadCount = async (userId) => {
         try {
-            const res = await fetch(`http://localhost:3001/api/messages/unread-count/${userId}`);
+            const res = await fetch(`https://clinic-management-system-new.onrender.com/api/messages/unread-count/${userId}`);
             const data = await res.json();
             if (data.success) {
                 setUnreadContactsCount(data.unreadCount);
@@ -33,7 +33,7 @@ const NurseLayout = () => {
     useEffect(() => {
         const fetchNurseProfile = async (userId) => {
             try {
-                const response = await fetch(`http://localhost:3001/api/get-nurse/${userId}`);
+                const response = await fetch(`https://clinic-management-system-new.onrender.com/api/get-nurse/${userId}`);
                 const data = await response.json();
 
                 if (data.success && data.nurse) {

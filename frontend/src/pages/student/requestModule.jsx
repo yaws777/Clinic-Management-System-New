@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import '../../styles/student/RequestModule.css';
 
-const API_BASE = 'http://localhost:3001/api/requests';
+const API_BASE = 'https://clinic-management-system-new.onrender.com/api/requests';
 
 export default function RequestModule() {
   // Extract studentId directly from StudentLayout context

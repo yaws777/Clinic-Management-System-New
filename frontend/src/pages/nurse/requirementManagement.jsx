@@ -41,7 +41,7 @@ const RequirementManagement = () => {
 
     const fetchStudents = async () => {
         try {
-            const res = await fetch('http://localhost:3001/api/students');
+            const res = await fetch('https://clinic-management-system-new.onrender.com/api/students');
             const data = await res.json();
             setStudents(Array.isArray(data) ? data : []);
         } catch (error) {
@@ -51,7 +51,7 @@ const RequirementManagement = () => {
 
     const fetchPrograms = async () => {
         try {
-            const res = await fetch('http://localhost:3001/api/programs');
+            const res = await fetch('https://clinic-management-system-new.onrender.com/api/programs');
             const data = await res.json();
             setPrograms(Array.isArray(data) ? data : []);
         } catch (error) {
@@ -61,7 +61,7 @@ const RequirementManagement = () => {
 
     const fetchProgramConfigs = async () => {
         try {
-            const res = await fetch('http://localhost:3001/api/program-requirements-config');
+            const res = await fetch('https://clinic-management-system-new.onrender.com/api/program-requirements-config');
             const data = await res.json();
             setProgramConfigs(Array.isArray(data) ? data : []);
         } catch (error) {
@@ -71,7 +71,7 @@ const RequirementManagement = () => {
 
     const fetchStudentFullRequirements = async (studentId) => {
         try {
-            const res = await fetch(`http://localhost:3001/api/students/${studentId}/full-requirements`);
+            const res = await fetch(`https://clinic-management-system-new.onrender.com/api/students/${studentId}/full-requirements`);
             const data = await res.json();
             
             if (data && data.error) {
@@ -110,7 +110,7 @@ const RequirementManagement = () => {
         }
 
         try {
-            const response = await fetch(`http://localhost:3001/api/students/${selectedStudent.student_id}/special-requirements`, {
+            const response = await fetch(`https://clinic-management-system-new.onrender.com/api/students/${selectedStudent.student_id}/special-requirements`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ 
@@ -148,7 +148,7 @@ const RequirementManagement = () => {
         }
 
         try {
-            const response = await fetch(`http://localhost:3001/api/students/${studentId}/requirements/${encodeURIComponent(reqName)}`, {
+            const response = await fetch(`https://clinic-management-system-new.onrender.com/api/students/${studentId}/requirements/${encodeURIComponent(reqName)}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(updatePayload),
@@ -173,7 +173,7 @@ const RequirementManagement = () => {
         if (!window.confirm(`Delete special requirement: ${reqName}?`)) return;
 
         try {
-            await fetch(`http://localhost:3001/api/students/${selectedStudent.student_id}/special-requirements/${encodeURIComponent(reqName)}`, {
+            await fetch(`https://clinic-management-system-new.onrender.com/api/students/${selectedStudent.student_id}/special-requirements/${encodeURIComponent(reqName)}`, {
                 method: 'DELETE'
             });
             alert("Requirement record removed.");
@@ -207,7 +207,7 @@ const RequirementManagement = () => {
         }
 
         try {
-            const response = await fetch(`http://localhost:3001/api/programs/${programId}/requirements`, {
+            const response = await fetch(`https://clinic-management-system-new.onrender.com/api/programs/${programId}/requirements`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ 
@@ -253,7 +253,7 @@ const RequirementManagement = () => {
         }
 
         try {
-            const response = await fetch(`http://localhost:3001/api/programs/${programId}/requirements/${configId}`, {
+            const response = await fetch(`https://clinic-management-system-new.onrender.com/api/programs/${programId}/requirements/${configId}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -280,7 +280,7 @@ const RequirementManagement = () => {
         if (!window.confirm(`Permanently delete "${reqName}" from this program track?`)) return;
 
         try {
-            await fetch(`http://localhost:3001/api/programs/${programId}/requirements/${configId}`, {
+            await fetch(`https://clinic-management-system-new.onrender.com/api/programs/${programId}/requirements/${configId}`, {
                 method: 'DELETE'
             });
             alert("Requirement deleted.");

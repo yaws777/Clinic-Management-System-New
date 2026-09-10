@@ -104,17 +104,17 @@ export default function MedicineInventory() {
 
   const fetchData = useCallback(async () => {
     try {
-      const invRes = await fetch('http://localhost:3001/api/inventory');
+      const invRes = await fetch('https://clinic-management-system-new.onrender.com/api/inventory');
       if (invRes.ok) setInventory(await invRes.json());
     } catch (e) { console.error("Inventory pipeline error", e); }
 
     try {
-      const compRes = await fetch('http://localhost:3001/api/complaints');
+      const compRes = await fetch('https://clinic-management-system-new.onrender.com/api/complaints');
       if (compRes.ok) setComplaints(await compRes.json());
     } catch (e) { console.error("Complaints pipeline error", e); }
 
     try {
-      const medRes = await fetch('http://localhost:3001/api/medicines');
+      const medRes = await fetch('https://clinic-management-system-new.onrender.com/api/medicines');
       if (medRes.ok) setMedicinesList(await medRes.json());
     } catch (e) { console.error("Medicines listing load failure", e); }
   }, []);
@@ -188,8 +188,8 @@ export default function MedicineInventory() {
     };
 
     const endpoint = isEditingMedicine 
-      ? `http://localhost:3001/api/medicines/${editingMedicineId}` 
-      : 'http://localhost:3001/api/medicines';
+      ? `https://clinic-management-system-new.onrender.com/api/medicines/${editingMedicineId}` 
+      : 'https://clinic-management-system-new.onrender.com/api/medicines';
     const method = isEditingMedicine ? 'PUT' : 'POST';
 
     try {
@@ -233,8 +233,8 @@ export default function MedicineInventory() {
     }
 
     const endpoint = editingBatch 
-      ? `http://localhost:3001/api/batches/${editingBatch.batch_id}` 
-      : 'http://localhost:3001/api/batches';
+      ? `https://clinic-management-system-new.onrender.com/api/batches/${editingBatch.batch_id}` 
+      : 'https://clinic-management-system-new.onrender.com/api/batches';
     const method = editingBatch ? 'PUT' : 'POST';
 
     try {
@@ -265,7 +265,7 @@ export default function MedicineInventory() {
   const handleDeleteBatch = async (batchId) => {
     if (!window.confirm('Confirm deletion of this batch entry?')) return;
     try {
-      const res = await fetch(`http://localhost:3001/api/batches/${batchId}`, { method: 'DELETE' });
+      const res = await fetch(`https://clinic-management-system-new.onrender.com/api/batches/${batchId}`, { method: 'DELETE' });
       if (res.ok) {
         showAlert('Target batch deleted.', 'success');
         fetchData();

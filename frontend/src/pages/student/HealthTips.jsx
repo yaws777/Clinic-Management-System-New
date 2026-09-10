@@ -221,7 +221,7 @@ const HealthTips = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch('http://localhost:3001/api/all-chief-complaints');
+      const response = await fetch('https://clinic-management-system-new.onrender.com/api/all-chief-complaints');
       const data = await response.json();
 
       if (data.success) {

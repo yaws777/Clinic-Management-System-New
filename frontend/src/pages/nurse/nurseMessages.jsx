@@ -41,7 +41,7 @@ const NurseMessages = () => {
     const fetchConversations = useCallback(async () => {
         if (!userId) return;
         try {
-            const res = await fetch(`http://localhost:3001/api/messages/conversations/${userId}`);
+            const res = await fetch(`https://clinic-management-system-new.onrender.com/api/messages/conversations/${userId}`);
             const data = await res.json();
             if (data.success) {
                 setConversations(data.conversations);
@@ -64,7 +64,7 @@ const NurseMessages = () => {
             return;
         }
         try {
-            const res = await fetch(`http://localhost:3001/api/messages/contacts?search=${encodeURIComponent(query)}`);
+            const res = await fetch(`https://clinic-management-system-new.onrender.com/api/messages/contacts?search=${encodeURIComponent(query)}`);
             const data = await res.json();
             if (data.success) {
                 setSearchResults(data.contacts);
@@ -87,7 +87,7 @@ const NurseMessages = () => {
         fetchChatHistory(contactUserId);
 
         try {
-            await fetch(`http://localhost:3001/api/messages/read/${userId}/${contactUserId}`, { method: 'PUT' });
+            await fetch(`https://clinic-management-system-new.onrender.com/api/messages/read/${userId}/${contactUserId}`, { method: 'PUT' });
             fetchConversations();
             if (refreshUnreadCount) refreshUnreadCount();
         } catch (err) {
@@ -97,7 +97,7 @@ const NurseMessages = () => {
 
     const fetchChatHistory = async (contactUserId) => {
         try {
-            const res = await fetch(`http://localhost:3001/api/messages/history/${userId}/${contactUserId}`);
+            const res = await fetch(`https://clinic-management-system-new.onrender.com/api/messages/history/${userId}/${contactUserId}`);
             const data = await res.json();
             if (data.success) {
                 setMessages(data.messages);
@@ -112,7 +112,7 @@ const NurseMessages = () => {
         if (!window.confirm('Unsend this message?')) return;
 
         try {
-            const res = await fetch(`http://localhost:3001/api/messages/${messageId}`, {
+            const res = await fetch(`https://clinic-management-system-new.onrender.com/api/messages/${messageId}`, {
                 method: 'DELETE'
             });
             const data = await res.json();
@@ -136,7 +136,7 @@ const NurseMessages = () => {
         if (!window.confirm('Delete this conversation? This cannot be undone.')) return;
 
         try {
-            const res = await fetch(`http://localhost:3001/api/messages/conversations/${userId}/${contactUserId}`, {
+            const res = await fetch(`https://clinic-management-system-new.onrender.com/api/messages/conversations/${userId}/${contactUserId}`, {
                 method: 'DELETE'
             });
             const data = await res.json();
@@ -231,7 +231,7 @@ const NurseMessages = () => {
         }
 
         try {
-            const res = await fetch('http://localhost:3001/api/messages/send', {
+            const res = await fetch('https://clinic-management-system-new.onrender.com/api/messages/send', {
                 method: 'POST',
                 body: formData
             });

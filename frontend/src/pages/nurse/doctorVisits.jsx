@@ -87,7 +87,7 @@ const DoctorVisit = () => {
 
     const fetchDoctors = async () => {
         try {
-            const res = await fetch('http://localhost:3001/api/doctors');
+            const res = await fetch('https://clinic-management-system-new.onrender.com/api/doctors');
             const data = await res.json();
             if (data.success) setDoctors(data.doctors);
         } catch (err) {
@@ -97,7 +97,7 @@ const DoctorVisit = () => {
 
     const fetchStudents = async () => {
         try {
-            const res = await fetch('http://localhost:3001/api/students-list');
+            const res = await fetch('https://clinic-management-system-new.onrender.com/api/students-list');
             const data = await res.json();
             if (data.success) setStudents(data.students);
         } catch (err) {
@@ -107,7 +107,7 @@ const DoctorVisit = () => {
 
     const fetchPrograms = async () => {
         try {
-            const res = await fetch('http://localhost:3001/api/academic-programs');
+            const res = await fetch('https://clinic-management-system-new.onrender.com/api/academic-programs');
             const data = await res.json();
             if (data.success) setPrograms(data.programs);
         } catch (err) {
@@ -118,7 +118,7 @@ const DoctorVisit = () => {
     const fetchAppointments = async () => {
         setLoading(true);
         try {
-            const res = await fetch('http://localhost:3001/api/doctor-visits');
+            const res = await fetch('https://clinic-management-system-new.onrender.com/api/doctor-visits');
             const data = await res.json();
             if (data.success) setAppointments(data.appointments);
         } catch (err) {
@@ -141,8 +141,8 @@ const DoctorVisit = () => {
     const handleSaveDoctor = async (e) => {
         e.preventDefault();
         const url = isEditDoctor 
-            ? `http://localhost:3001/api/doctors/${doctorForm.doctor_id}`
-            : 'http://localhost:3001/api/doctors';
+            ? `https://clinic-management-system-new.onrender.com/api/doctors/${doctorForm.doctor_id}`
+            : 'https://clinic-management-system-new.onrender.com/api/doctors';
         const method = isEditDoctor ? 'PUT' : 'POST';
 
         try {
@@ -288,7 +288,7 @@ const DoctorVisit = () => {
     const handleSaveAssessment = async (e) => {
         e.preventDefault();
         try {
-            const res = await fetch('http://localhost:3001/api/doctor-assessments', {
+            const res = await fetch('https://clinic-management-system-new.onrender.com/api/doctor-assessments', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -324,7 +324,7 @@ const DoctorVisit = () => {
     const handleSaveReschedule = async (e) => {
         e.preventDefault();
         try {
-            const res = await fetch(`http://localhost:3001/api/doctor-visits/reschedule/${rescheduleData.appointment_id}`, {
+            const res = await fetch(`https://clinic-management-system-new.onrender.com/api/doctor-visits/reschedule/${rescheduleData.appointment_id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -348,7 +348,7 @@ const DoctorVisit = () => {
         if (!window.confirm('Are you sure you want to cancel this doctor visit appointment?')) return;
 
         try {
-            const res = await fetch(`http://localhost:3001/api/doctor-visits/cancel/${appt.appointment_id}`, {
+            const res = await fetch(`https://clinic-management-system-new.onrender.com/api/doctor-visits/cancel/${appt.appointment_id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ student_user_id: appt.student_user_id })

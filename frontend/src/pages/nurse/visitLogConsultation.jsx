@@ -45,7 +45,7 @@ const VisitLogConsultation = () => {
 
     const fetchComplaints = async () => {
         try {
-            const res = await fetch('http://localhost:3001/api/chief-complaints');
+            const res = await fetch('https://clinic-management-system-new.onrender.com/api/chief-complaints');
             const data = await res.json();
             setComplaints(Array.isArray(data) ? data : []);
         } catch (err) { 
@@ -56,7 +56,7 @@ const VisitLogConsultation = () => {
 
     const fetchBatches = async () => {
         try {
-            const res = await fetch('http://localhost:3001/api/inventory/batches');
+            const res = await fetch('https://clinic-management-system-new.onrender.com/api/inventory/batches');
             const data = await res.json();
             setBatches(Array.isArray(data) ? data : []);
         } catch (err) { 
@@ -67,7 +67,7 @@ const VisitLogConsultation = () => {
 
     const fetchHistory = async () => {
         try {
-            const res = await fetch('http://localhost:3001/api/clinic-visits');
+            const res = await fetch('https://clinic-management-system-new.onrender.com/api/clinic-visits');
             const data = await res.json();
             setHistory(Array.isArray(data) ? data : []);
         } catch (err) { 
@@ -83,7 +83,7 @@ const VisitLogConsultation = () => {
             return;
         }
         try {
-            const res = await fetch(`http://localhost:3001/api/students/search?query=${val}`);
+            const res = await fetch(`https://clinic-management-system-new.onrender.com/api/students/search?query=${val}`);
             const data = await res.json();
             setStudents(Array.isArray(data) ? data : []);
         } catch (err) { 

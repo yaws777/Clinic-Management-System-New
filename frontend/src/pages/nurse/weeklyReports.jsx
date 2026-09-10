@@ -85,7 +85,7 @@ const WeeklyReports = () => {
         endDate: weekInfo.endDate
       }).toString();
 
-      const response = await fetch(`http://localhost:3001/api/weekly-reports?${queryParams}`);
+      const response = await fetch(`https://clinic-management-system-new.onrender.com/api/weekly-reports?${queryParams}`);
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));

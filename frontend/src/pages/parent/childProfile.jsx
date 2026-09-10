@@ -41,14 +41,14 @@ export default function ChildProfile() {
 
             try {
                 // Fetch Student Header Details
-                const studentRes = await fetch(`http://localhost:3001/api/get-student-by-studentId/${studentId}`);
+                const studentRes = await fetch(`https://clinic-management-system-new.onrender.com/api/get-student-by-studentId/${studentId}`);
                 const studentData = await studentRes.json();
 
                 if (studentData.success) {
                     setStudentHeader(studentData.student);
 
                     // Fetch Profile Data (Personal, Health, Emergency)
-                    const profileRes = await fetch(`http://localhost:3001/api/profile/${studentId}`);
+                    const profileRes = await fetch(`https://clinic-management-system-new.onrender.com/api/profile/${studentId}`);
                     const profileData = await profileRes.json();
 
                     if (profileData.success) {
@@ -92,7 +92,7 @@ export default function ChildProfile() {
             if (activeTab !== 'requirements' || !studentId) return;
             setReqLoading(true);
             try {
-                const response = await fetch(`http://localhost:3001/api/students/${studentId}/full-requirements`);
+                const response = await fetch(`https://clinic-management-system-new.onrender.com/api/students/${studentId}/full-requirements`);
                 const data = await response.json();
                 if (Array.isArray(data)) {
                     setRequirementsList(data);

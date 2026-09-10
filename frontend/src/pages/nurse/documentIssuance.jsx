@@ -42,7 +42,7 @@ const DocumentIssuance = () => {
     const fetchRequests = async () => {
         setLoading(true);
         try {
-            const response = await fetch('http://localhost:3001/api/document-requests');
+            const response = await fetch('https://clinic-management-system-new.onrender.com/api/document-requests');
             const data = await response.json();
             if (data.success) {
                 setRequests(data.requests);
@@ -96,7 +96,7 @@ const DocumentIssuance = () => {
     // Fetch notes for a specific request
     const fetchNotes = async (requestType, requestId) => {
         try {
-            const res = await fetch(`http://localhost:3001/api/document-requests/notes/${requestType}/${requestId}`);
+            const res = await fetch(`https://clinic-management-system-new.onrender.com/api/document-requests/notes/${requestType}/${requestId}`);
             const data = await res.json();
             if (data.success) {
                 setNotes(data.notes);
@@ -139,7 +139,7 @@ const DocumentIssuance = () => {
         setModalError('');
 
         try {
-            const response = await fetch('http://localhost:3001/api/document-requests/notes', {
+            const response = await fetch('https://clinic-management-system-new.onrender.com/api/document-requests/notes', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -194,7 +194,7 @@ const DocumentIssuance = () => {
         }
 
         try {
-            const response = await fetch('http://localhost:3001/api/document-requests/action', {
+            const response = await fetch('https://clinic-management-system-new.onrender.com/api/document-requests/action', {
                 method: 'POST',
                 body: formData,
             });

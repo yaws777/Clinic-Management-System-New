@@ -16,7 +16,7 @@ import {
 } from 'lucide-react';
 import '../../styles/parent/ChildClinicRecords.css';
 
-const API_BASE = 'http://localhost:3001';
+const API_BASE = 'https://clinic-management-system-new.onrender.com';
 
 const formatDate = (dateStr) => {
   if (!dateStr) return 'N/A';
