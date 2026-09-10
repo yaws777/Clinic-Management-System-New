@@ -205,7 +205,7 @@ const VisitLogConsultation = () => {
         };
 
         try {
-            const res = await fetch('http://localhost:3001/api/clinic-visits', {
+            const res = await fetch('https://clinic-management-system-new.onrender.com/api/clinic-visits', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(submissionPayload)
@@ -233,7 +233,7 @@ const VisitLogConsultation = () => {
         }
 
         try {
-            const res = await fetch(`http://localhost:3001/api/clinic-visits/${visitId}/timeout`, {
+            const res = await fetch(`https://clinic-management-system-new.onrender.com/api/clinic-visits/${visitId}/timeout`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ time_out: timeOutVal })
