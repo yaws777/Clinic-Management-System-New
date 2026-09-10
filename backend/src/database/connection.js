@@ -1441,7 +1441,7 @@ app.post('/api/students/:id/requirements/:reqName/submit', upload.single('file')
 
     // Build the absolute backend target path. 
     // Since React runs on a different port (e.g. 3000), we explicitly route to the backend server domain (3001)
-    const file_url = `http://localhost:3001/uploads/${req.file.filename}`;
+    const file_url = `https://clinic-management-system-new.onrender.com/uploads/${req.file.filename}`;
 
     try {
         // Fetch student foundational configuration mapping parameters
