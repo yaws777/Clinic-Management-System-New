@@ -394,7 +394,7 @@ const DocumentIssuance = () => {
                                         {selectedRequest.student_proof_url && (
                                             <div className="file-attachment">
                                                 <Paperclip size={16} />
-                                                <a href={`http://localhost:3001${selectedRequest.student_proof_url}`} target="_blank" rel="noreferrer">
+                                                <a href={`https://clinic-management-system-new.onrender.com${selectedRequest.student_proof_url}`} target="_blank" rel="noreferrer">
                                                     View Student Attachment Proof
                                                 </a>
                                             </div>
@@ -536,7 +536,7 @@ const DocumentIssuance = () => {
                                     {selectedRequest.issued_slip_url && (
                                         <div className="file-attachment mt-2">
                                             <Paperclip size={16} />
-                                            <a href={`http://localhost:3001${selectedRequest.issued_slip_url}`} target="_blank" rel="noreferrer">
+                                            <a href={`https://clinic-management-system-new.onrender.com${selectedRequest.issued_slip_url}`} target="_blank" rel="noreferrer">
                                                 View Official Issued Document
                                             </a>
                                         </div>

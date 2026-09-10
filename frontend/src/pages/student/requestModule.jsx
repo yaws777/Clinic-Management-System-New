@@ -352,7 +352,7 @@ export default function RequestModule() {
                     {selectedRequest.student_proof_url && (
                       <p>
                         <strong>Attachment:</strong>{' '}
-                        <a href={`http://localhost:3001${selectedRequest.student_proof_url}`} target="_blank" rel="noreferrer">
+                        <a href={`https://clinic-management-system-new.onrender.com${selectedRequest.student_proof_url}`} target="_blank" rel="noreferrer">
                           View Uploaded Proof
                         </a>
                       </p>
@@ -368,7 +368,7 @@ export default function RequestModule() {
                 {selectedRequest.issued_slip_url ? (
                   <p className="sti-issued-link">
                     <strong>Issued Slip Document:</strong>{' '}
-                    <a href={`http://localhost:3001${selectedRequest.issued_slip_url}`} target="_blank" rel="noreferrer">
+                    <a href={`https://clinic-management-system-new.onrender.com${selectedRequest.issued_slip_url}`} target="_blank" rel="noreferrer">
                       📄 Download Issued Slip
                     </a>
                   </p>
