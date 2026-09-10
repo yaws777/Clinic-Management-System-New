@@ -246,7 +246,7 @@ const DoctorVisit = () => {
         };
 
         try {
-            const res = await fetch('http://localhost:3001/api/mass-schedules', {
+            const res = await fetch('https://clinic-management-system-new.onrender.com/api/mass-schedules', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)

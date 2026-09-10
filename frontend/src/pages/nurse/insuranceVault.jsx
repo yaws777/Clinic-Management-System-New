@@ -516,7 +516,7 @@ const InsuranceVault = () => {
                                             </div>
                                             <div className="file-actions">
                                                 {file.file_url && (
-                                                    <a href={`http://localhost:3001${file.file_url}`} target="_blank" rel="noopener noreferrer" className="btn-action view" title="View/Download">
+                                                    <a href={`https://clinic-management-system-new.onrender.com${file.file_url}`} target="_blank" rel="noopener noreferrer" className="btn-action view" title="View/Download">
                                                         <Download size={16} />
                                                     </a>
                                                 )}

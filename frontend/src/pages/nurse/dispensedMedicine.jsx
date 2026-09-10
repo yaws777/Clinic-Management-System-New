@@ -205,7 +205,7 @@ const DispensedMedicine = () => {
     }
 
     try {
-      const response = await fetch('http://localhost:3001/api/dispensation', {
+      const response = await fetch('https://clinic-management-system-new.onrender.com/api/dispensation', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
