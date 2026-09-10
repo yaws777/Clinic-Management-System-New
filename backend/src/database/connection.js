@@ -46,6 +46,7 @@ const storage = multer.diskStorage({
     }
 });
 
+
 const upload = multer({ storage: storage });
 app.use(express.json());
 app.use(cors());
@@ -62,78 +63,93 @@ app.use(bodyParser.urlencoded({ extended: true }));
 });
 
 
-//Format Number
-function formatPhoneNumber(phone) {
-    if (!phone) return null;
-    let cleaned = phone.trim().replace(/[\s\-\(\)]/g, '');
-    
-    // If phone starts with local '0', replace with default country code
-    if (cleaned.startsWith('0')) {
-        const countryCode = process.env.DEFAULT_COUNTRY_CODE || '+63';
-        cleaned = countryCode + cleaned.substring(1);
-    } else if (!cleaned.startsWith('+')) {
-        cleaned = '+' + cleaned;
-    }
-    return cleaned;
-}
-
 /**
- * Format local numbers to standard PH format (09171234567)
+ * Formats and validates a Philippine mobile number into the '639XXXXXXXXX' standard.
+ * Returns null if the number is not a valid PH mobile number.
+ * @param {string} phone 
+ * @returns {string|null}
  */
-function formatPhPhoneForIprog(phone) {
-    if (!phone) return null;
-    let cleaned = phone.trim().replace(/[\s\-\(\)\+]/g, '');
+function formatPHMobileNumber(phone) {
+    if (!phone || typeof phone !== 'string') return null;
 
-    // Convert 639XXXXXXXXX -> 09XXXXXXXXX
-    if (cleaned.startsWith('639')) {
-        cleaned = '0' + cleaned.substring(2);
+    // Strip out all non-numeric characters (spaces, +, dashes, parens)
+    const cleaned = phone.trim().replace(/[^0-9]/g, '');
+
+    // Format 1: Local 11-digit format (09171234567 -> 639171234567)
+    if (cleaned.startsWith('09') && cleaned.length === 11) {
+        return '63' + cleaned.slice(1);
     }
-    
-    // Ensure it starts with 09 and is 11 digits
-    if (/^09\d{9}$/.test(cleaned)) {
+
+    // Format 2: International 12-digit format (639171234567)
+    if (cleaned.startsWith('639') && cleaned.length === 12) {
         return cleaned;
     }
-    
+
+    // Format 3: 10-digit format without leading 0 (9171234567 -> 639171234567)
+    if (cleaned.startsWith('9') && cleaned.length === 10) {
+        return '63' + cleaned;
+    }
+
+    // Return null if it doesn't match valid PH mobile number patterns
     return null;
 }
 
 /**
- * Send SMS using iPROG API
+ * Sends SMS using PhilSMS API v3 to valid Philippine mobile number(s)
+ * @param {string|string[]} recipients - Single phone string or array of phone numbers
+ * @param {string} message - Message body content
  */
-async function sendIprogSms(toPhoneNumber, messageBody) {
-    const formattedPhone = formatPhPhoneForIprog(toPhoneNumber);
-    
-    if (!formattedPhone) {
-        throw new Error(`Invalid PH phone number format: ${toPhoneNumber}`);
+async function sendPhilSms(recipients, message) {
+    const apiToken = process.env.PHILSMS_API_TOKEN;
+    const senderId = 'STI-Baliuag'||process.env.PHILSMS_SENDER_ID || 'PhilSMS';
+
+    if (!apiToken) {
+        throw new Error('PHILSMS_API_TOKEN is not defined in environment variables.');
     }
 
-    const endpoint = process.env.IPROG_SMS_ENDPOINT || 'https://sms.iprogtech.com/api/v1/send_sms';
+    // Convert input into array if passed as single string or comma-separated string
+    const rawList = Array.isArray(recipients) ? recipients : recipients.split(',');
 
-    // Use URLSearchParams (form-urlencoded) required by iPROG API
-    const bodyParams = new URLSearchParams({
-        api_token: process.env.IPROG_API_TOKEN,
-        phone_number: formattedPhone,
-        message: messageBody
-    });
+    // Filter and format for VALID PH mobile numbers only
+    const validPhNumbers = [...new Set(
+        rawList
+            .map(phone => formatPHMobileNumber(phone))
+            .filter(phone => phone !== null)
+    )].join(','); // Join with commas as expected by PhilSMS
 
-    const response = await fetch(endpoint, {
+    if (!validPhNumbers) {
+        throw new Error('No valid Philippine mobile numbers found.');
+    }
+
+    const payload = {
+        recipient: validPhNumbers,
+        sender_id: senderId,
+        type: 'plain',
+        message: message
+    };
+
+    const response = await fetch('https://app.philsms.com/api/v3/sms/send', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
+            'Authorization': `Bearer ${apiToken}`,
+            'Content-Type': 'application/json',
             'Accept': 'application/json'
         },
-        body: bodyParams.toString()
+        body: JSON.stringify(payload)
     });
 
-    // Handle non-200 responses (e.g. 404 Not Found, 401 Unauthorized)
+    const data = await response.json();
+
     if (!response.ok) {
-        const rawText = await response.text();
-        throw new Error(`Endpoint returned HTTP ${response.status}: ${rawText || response.statusText}`);
+        throw new Error(data.message || `PhilSMS API error! Status: ${response.status}`);
     }
 
-    const data = await response.json();
     return data;
 }
+
+module.exports = { sendPhilSms, formatPHMobileNumber };
+
+
 
 //Access role and Management api
 // 1. LOGIN ENDPOINT
@@ -2363,96 +2379,96 @@ app.post('/api/clinic-visits', async (req, res) => {
         ]);
 
         // 2. Handle Medicine Dispensation
-if (batch_id && dosage_consumption_unit_value) {
-    const numericVal = parseFloat(dosage_consumption_unit_value);
+        if (batch_id && dosage_consumption_unit_value) {
+            const numericVal = parseFloat(dosage_consumption_unit_value);
 
-    if (isNaN(numericVal) || numericVal <= 0) {
-        throw new Error('Dosage value must be greater than zero.');
-    }
-
-    const measuredUnits = ['mg', 'g', 'mcg', 'mL', 'L'];
-    const isMeasured = measuredUnits.includes(dosage_consumption_unit_of_measure);
-
-    if (!isMeasured && !Number.isInteger(numericVal)) {
-        throw new Error('Quantity for discrete items (e.g. tablets, capsules) must be a whole integer.');
-    }
-
-    // Join with medicines table to fetch strength_unit_value for volume auto-replenish
-    const [batchRows] = await connection.execute(
-        `SELECT mib.current_stock, mib.remaining_volume, mib.expiration_date, m.strength_unit_value 
-         FROM medicine_inventory_batches mib 
-         JOIN medicines m ON mib.medicine_id = m.medicine_id 
-         WHERE mib.batch_id = ? FOR UPDATE`,
-        [batch_id]
-    );
-
-    if (batchRows.length === 0) throw new Error("Target medicine batch not found.");
-
-    let currentStock = parseInt(batchRows[0].current_stock, 10);
-    let remainingVolume = parseFloat(batchRows[0].remaining_volume);
-    const strengthUnitVal = parseFloat(batchRows[0].strength_unit_value);
-    const expirationDate = new Date(batchRows[0].expiration_date);
-
-    if (expirationDate < new Date()) {
-        throw new Error("Cannot dispense medicine from an expired batch.");
-    }
-
-    if (isMeasured) {
-        // Calculate total available volume across all containers in the batch
-        const totalAvailableVolume = currentStock > 0 
-            ? remainingVolume + (currentStock - 1) * strengthUnitVal 
-            : 0;
-
-        if (numericVal > totalAvailableVolume) {
-            throw new Error(`Insufficient volume. Requested ${numericVal} ${dosage_consumption_unit_of_measure}, but total available is ${totalAvailableVolume} ${dosage_consumption_unit_of_measure}.`);
-        }
-
-        let newRemaining = remainingVolume - numericVal;
-        let newStock = currentStock;
-
-        // Auto-decrement stock and reset remaining_volume to strength_unit_value
-        while (newRemaining <= 0 && newStock > 0) {
-            newStock -= 1;
-            if (newRemaining === 0) {
-                if (newStock >= 1) {
-                    newRemaining = strengthUnitVal;
-                }
-                break;
-            } else {
-                if (newStock >= 1) {
-                    newRemaining = strengthUnitVal + newRemaining;
-                } else {
-                    newRemaining = 0;
-                    break;
-                }
+            if (isNaN(numericVal) || numericVal <= 0) {
+                throw new Error('Dosage value must be greater than zero.');
             }
+
+            const measuredUnits = ['mg', 'g', 'mcg', 'mL', 'L'];
+            const isMeasured = measuredUnits.includes(dosage_consumption_unit_of_measure);
+
+            if (!isMeasured && !Number.isInteger(numericVal)) {
+                throw new Error('Quantity for discrete items (e.g. tablets, capsules) must be a whole integer.');
+            }
+
+            const [batchRows] = await connection.execute(
+                `SELECT mib.current_stock, mib.remaining_volume, mib.expiration_date, m.strength_unit_value 
+                 FROM medicine_inventory_batches mib 
+                 JOIN medicines m ON mib.medicine_id = m.medicine_id 
+                 WHERE mib.batch_id = ? FOR UPDATE`,
+                [batch_id]
+            );
+
+            if (batchRows.length === 0) throw new Error("Target medicine batch not found.");
+
+            let currentStock = parseInt(batchRows[0].current_stock, 10);
+            let remainingVolume = parseFloat(batchRows[0].remaining_volume);
+            const strengthUnitVal = parseFloat(batchRows[0].strength_unit_value);
+            const expirationDate = new Date(batchRows[0].expiration_date);
+
+            if (expirationDate < new Date()) {
+                throw new Error("Cannot dispense medicine from an expired batch.");
+            }
+
+            if (isMeasured) {
+                const totalAvailableVolume = currentStock > 0 
+                    ? remainingVolume + (currentStock - 1) * strengthUnitVal 
+                    : 0;
+
+                if (numericVal > totalAvailableVolume) {
+                    throw new Error(`Insufficient volume. Requested ${numericVal} ${dosage_consumption_unit_of_measure}, but total available is ${totalAvailableVolume} ${dosage_consumption_unit_of_measure}.`);
+                }
+
+                let newRemaining = remainingVolume - numericVal;
+                let newStock = currentStock;
+
+                while (newRemaining <= 0 && newStock > 0) {
+                    newStock -= 1;
+                    if (newRemaining === 0) {
+                        if (newStock >= 1) newRemaining = strengthUnitVal;
+                        break;
+                    } else {
+                        if (newStock >= 1) {
+                            newRemaining = strengthUnitVal + newRemaining;
+                        } else {
+                            newRemaining = 0;
+                            break;
+                        }
+                    }
+                }
+
+                await connection.execute(
+                    'UPDATE medicine_inventory_batches SET current_stock = ?, remaining_volume = ? WHERE batch_id = ?',
+                    [newStock, newRemaining, batch_id]
+                );
+            } else {
+                if (numericVal > currentStock) {
+                    throw new Error(`Insufficient stock quantity. Requested ${numericVal}, but only ${currentStock} left.`);
+                }
+                await connection.execute(
+                    'UPDATE medicine_inventory_batches SET current_stock = current_stock - ? WHERE batch_id = ?',
+                    [numericVal, batch_id]
+                );
+            }
+
+            const dispensation_id = 'DISP-' + Math.random().toString(36).substr(2, 9).toUpperCase();
+            await connection.execute(
+                `INSERT INTO consultation_dispensation 
+                 (consultation_dispense_id, visit_id, batch_id, dosage_consumption_unit_value, dosage_consumption_unit_of_measure, dispensed_at) 
+                 VALUES (?, ?, ?, ?, ?, NOW())`,
+                [dispensation_id, visit_id, batch_id, numericVal, dosage_consumption_unit_of_measure]
+            );
         }
 
-        await connection.execute(
-            'UPDATE medicine_inventory_batches SET current_stock = ?, remaining_volume = ? WHERE batch_id = ?',
-            [newStock, newRemaining, batch_id]
-        );
-    } else {
-        if (numericVal > currentStock) {
-            throw new Error(`Insufficient stock quantity. Requested ${numericVal}, but only ${currentStock} left.`);
-        }
-        await connection.execute(
-            'UPDATE medicine_inventory_batches SET current_stock = current_stock - ? WHERE batch_id = ?',
-            [numericVal, batch_id]
-        );
-    }
+        // Commit database transaction prior to firing external API requests
+        await connection.commit();
 
-    const dispensation_id = 'DISP-' + Math.random().toString(36).substr(2, 9).toUpperCase();
-    await connection.execute(
-        `INSERT INTO consultation_dispensation 
-         (consultation_dispense_id, visit_id, batch_id, dosage_consumption_unit_value, dosage_consumption_unit_of_measure, dispensed_at) 
-         VALUES (?, ?, ?, ?, ?, NOW())`,
-        [dispensation_id, visit_id, batch_id, numericVal, dosage_consumption_unit_of_measure]
-    );
-}
-
-        // 3. iPROG SMS NOTIFICATION SECTION
+        // 3. PhilSMS BATCH SMS NOTIFICATION SECTION
         let smsNotificationSent = false;
+        let recipientCount = 0;
+
         try {
             const smsDetailsSql = `
                 SELECT 
@@ -2476,9 +2492,9 @@ if (batch_id && dosage_consumption_unit_value) {
                 WHERE cv.visit_id = ?
             `;
 
-            const [detailsRows] = await pool.execute(smsDetailsSql, [visit_id]);
+            const [detailsRows] = await connection.execute(smsDetailsSql, [visit_id]);
 
-            if (detailsRows.length > 0 && detailsRows[0].primary_phone) {
+            if (detailsRows.length > 0) {
                 const info = detailsRows[0];
                 const studentFullName = `${info.student_first_name} ${info.student_last_name}`;
                 const complaintName = info.complaint_name || 'General Checkup';
@@ -2492,22 +2508,34 @@ if (batch_id && dosage_consumption_unit_value) {
                     `${studentFullName} visited the clinic because of ${complaintName}.\n\n` +
                     `Other Details:\n` +
                     `Nursing intervention: ${interventionText}\n` +
-                    `health_advice: ${healthAdviceText}\n` +
-                    `medicine given: ${medicineGiven}`;
+                    `Health advice: ${healthAdviceText}\n` +
+                    `Medicine given: ${medicineGiven}`;
 
-                await sendIprogSms(info.primary_phone, smsMessage);
-                smsNotificationSent = true;
+                // Extract unique, non-empty phone numbers from all linked parent records
+                const phoneNumbers = [...new Set(
+                    detailsRows
+                        .map(row => row.primary_phone)
+                        .filter(phone => phone && phone.trim() !== '')
+                )];
+
+                if (phoneNumbers.length > 0) {
+                    // Single API dispatch via comma separation
+                    await sendPhilSms(phoneNumbers, smsMessage);
+                    smsNotificationSent = true;
+                    recipientCount = phoneNumbers.length;
+                }
             }
         } catch (smsError) {
-            console.error('[iPROG SMS Error] Failed to send SMS:', smsError.message);
+            console.error('[PhilSMS Error] Failed to send SMS:', smsError.message);
         }
 
         res.status(201).json({ 
             success: true, 
             message: smsNotificationSent 
-                ? "Consultation logged and parent notified via SMS!" 
-                : "Consultation logged successfully (SMS notification failed or skipped).",
-            smsSent: smsNotificationSent
+                ? `Consultation logged and ${recipientCount} parent(s) notified via SMS!` 
+                : "Consultation logged successfully (SMS notification skipped or failed).",
+            smsSent: smsNotificationSent,
+            recipientsCount: recipientCount
         });
 
     } catch (error) {
