@@ -3,6 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { Eye, EyeOff } from 'lucide-react';
 import '../styles/Login.css'; 
 
+// Dynamic API Base definition inside Login.jsx
+const RENDER_URL = 'https://clinic-management-system-new.onrender.com';
+const LOCALHOST_URL = 'http://localhost:3000'; // Update with your local port
+
+const API_BASE = process.env.NODE_ENV === 'production' ? RENDER_URL : LOCALHOST_URL;
+
 export default function Login() {
     const navigate = useNavigate();
     const [isLoginView, setIsLoginView] = useState(true);
@@ -66,7 +72,7 @@ export default function Login() {
         setSuccessMsg('');
 
         try {
-            const response = await fetch('https://clinic-management-system-new.onrender.com/api/login', {
+            const response = await fetch(`${API_BASE}/api/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ username, password })
@@ -155,7 +161,7 @@ export default function Login() {
         }
 
         try {
-            const response = await fetch('https://clinic-management-system-new.onrender.com/api/change-password', {
+            const response = await fetch(`${API_BASE}/api/change-password`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ username, newPassword })
@@ -193,7 +199,7 @@ export default function Login() {
         }
 
         try {
-            const response = await fetch('https://clinic-management-system-new.onrender.com/api/update-parent-profile', {
+            const response = await fetch(`${API_BASE}/api/update-parent-profile`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -222,7 +228,7 @@ export default function Login() {
         setErrorMsg('');
         setRetrievedPassword('');
         try {
-            const response = await fetch('https://clinic-management-system-new.onrender.com/api/forgot-password', {
+            const response = await fetch(`${API_BASE}/api/forgot-password`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ username, firstName, lastName })
