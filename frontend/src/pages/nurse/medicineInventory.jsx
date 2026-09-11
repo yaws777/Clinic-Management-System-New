@@ -15,6 +15,17 @@ import {
 } from 'lucide-react';
 import '../../styles/nurse/MedicineInventory.css'; 
 
+// API Base URL Configuration (Render primary, Localhost secondary fallback)
+const RENDER_BASE_URL = 'https://clinic-management-system-new.onrender.com';
+const LOCALHOST_BASE_URL = 'http://localhost:3000'; // Adjust port if your local backend uses a different port
+
+// Automatically checks hostname or defaults to Render first
+const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    ? LOCALHOST_BASE_URL
+    : (RENDER_BASE_URL || LOCALHOST_BASE_URL);
+
+const API_BASE = `${API_BASE_URL}/api`;
+
 const DOSAGE_FORMS = [
   'Tablet', 'Capsule', 'Sachet', 'Patch',
   'Syrup', 'Suspension', 'Drops', 'Bottle',
@@ -104,17 +115,17 @@ export default function MedicineInventory() {
 
   const fetchData = useCallback(async () => {
     try {
-      const invRes = await fetch('https://clinic-management-system-new.onrender.com/api/inventory');
+      const invRes = await fetch(`${API_BASE}/inventory`);
       if (invRes.ok) setInventory(await invRes.json());
     } catch (e) { console.error("Inventory pipeline error", e); }
 
     try {
-      const compRes = await fetch('https://clinic-management-system-new.onrender.com/api/complaints');
+      const compRes = await fetch(`${API_BASE}/complaints`);
       if (compRes.ok) setComplaints(await compRes.json());
     } catch (e) { console.error("Complaints pipeline error", e); }
 
     try {
-      const medRes = await fetch('https://clinic-management-system-new.onrender.com/api/medicines');
+      const medRes = await fetch(`${API_BASE}/medicines`);
       if (medRes.ok) setMedicinesList(await medRes.json());
     } catch (e) { console.error("Medicines listing load failure", e); }
   }, []);
@@ -188,8 +199,8 @@ export default function MedicineInventory() {
     };
 
     const endpoint = isEditingMedicine 
-      ? `https://clinic-management-system-new.onrender.com/api/medicines/${editingMedicineId}` 
-      : 'https://clinic-management-system-new.onrender.com/api/medicines';
+      ? `${API_BASE}/medicines/${editingMedicineId}` 
+      : `${API_BASE}/medicines`;
     const method = isEditingMedicine ? 'PUT' : 'POST';
 
     try {
@@ -233,8 +244,8 @@ export default function MedicineInventory() {
     }
 
     const endpoint = editingBatch 
-      ? `https://clinic-management-system-new.onrender.com/api/batches/${editingBatch.batch_id}` 
-      : 'https://clinic-management-system-new.onrender.com/api/batches';
+      ? `${API_BASE}/batches/${editingBatch.batch_id}` 
+      : `${API_BASE}/batches`;
     const method = editingBatch ? 'PUT' : 'POST';
 
     try {
@@ -265,7 +276,7 @@ export default function MedicineInventory() {
   const handleDeleteBatch = async (batchId) => {
     if (!window.confirm('Confirm deletion of this batch entry?')) return;
     try {
-      const res = await fetch(`https://clinic-management-system-new.onrender.com/api/batches/${batchId}`, { method: 'DELETE' });
+      const res = await fetch(`${API_BASE}/batches/${batchId}`, { method: 'DELETE' });
       if (res.ok) {
         showAlert('Target batch deleted.', 'success');
         fetchData();

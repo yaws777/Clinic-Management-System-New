@@ -3,6 +3,15 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Folder, Lock, FileText } from 'lucide-react';
 import '../../styles/nurse/HealthRecordProfile.css';
 
+// API Base URL Configuration (Render primary, Localhost secondary fallback)
+const RENDER_BASE_URL = 'https://clinic-management-system-new.onrender.com';
+const LOCALHOST_BASE_URL = 'http://localhost:3000'; // Adjust port number if your local backend uses another port
+
+// Automatically checks hostname or defaults to Render first
+const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    ? LOCALHOST_BASE_URL
+    : (RENDER_BASE_URL || LOCALHOST_BASE_URL);
+
 export default function HealthRecordsProfile() {
     const { studentId } = useParams(); 
     const navigate = useNavigate();
@@ -22,13 +31,13 @@ export default function HealthRecordsProfile() {
         const loadStudentData = async () => {
             try {
                 setLoading(true);
-                const headerRes = await fetch(`https://clinic-management-system-new.onrender.com/api/health-records/student-header/${studentId}`);
+                const headerRes = await fetch(`${API_BASE_URL}/api/health-records/student-header/${studentId}`);
                 const headerData = await headerRes.json();
 
                 if (headerData.success) {
                     setStudentHeader(headerData.student);
 
-                    const profileRes = await fetch(`https://clinic-management-system-new.onrender.com/api/profile/${studentId}`);
+                    const profileRes = await fetch(`${API_BASE_URL}/api/profile/${studentId}`);
                     const profileData = await profileRes.json();
 
                     if (profileData.success) {
@@ -70,7 +79,7 @@ export default function HealthRecordsProfile() {
             if (activeTab !== 'requirements' || !studentId) return;
             setReqLoading(true);
             try {
-                const response = await fetch(`https://clinic-management-system-new.onrender.com/api/students/${studentId}/full-requirements`);
+                const response = await fetch(`${API_BASE_URL}/api/students/${studentId}/full-requirements`);
                 const data = await response.json();
                 if (Array.isArray(data)) {
                     setRequirementsList(data);
@@ -356,6 +365,10 @@ export default function HealthRecordsProfile() {
                                             if (['completed', 'submitted'].includes(statusLower)) statusClass = 'complete';
                                             if (['late', 'submitted late', 'overdue', 'missing'].includes(statusLower)) statusClass = 'danger';
 
+                                            const fullFileUrl = req.file_url?.startsWith('http') 
+                                                ? req.file_url 
+                                                : `${API_BASE_URL}${req.file_url}`;
+
                                             return (
                                                 <tr key={req.requirement_name}>
                                                     <td style={{ fontWeight: '500' }}>{req.requirement_name}</td>
@@ -378,7 +391,7 @@ export default function HealthRecordsProfile() {
                                                     <td>
                                                         {fileIsPresent ? (
                                                             <a 
-                                                                href={req.file_url} target="_blank" rel="noopener noreferrer"
+                                                                href={fullFileUrl} target="_blank" rel="noopener noreferrer"
                                                                 className="btn-document-link"
                                                             >
                                                                 <FileText size={14} /> Open Document

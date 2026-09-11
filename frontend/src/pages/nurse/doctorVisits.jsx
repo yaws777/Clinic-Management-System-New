@@ -16,6 +16,15 @@ import {
 } from 'lucide-react';
 import '../../styles/nurse/DoctorVisits.css';
 
+// API Base URL Configuration (Render primary, Localhost secondary fallback)
+const RENDER_BASE_URL = 'https://clinic-management-system-new.onrender.com';
+const LOCALHOST_BASE_URL = 'http://localhost:3000'; // Adjust port number if your local backend uses another port
+
+// Automatically checks hostname or defaults to Render first
+const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    ? LOCALHOST_BASE_URL
+    : (RENDER_BASE_URL || LOCALHOST_BASE_URL);
+
 // Helper: Formats JS Date to "YYYY-MM-DD HH:MM:SS" preserving local timezone
 const formatLocalToSQL = (date) => {
     const pad = (num) => String(num).padStart(2, '0');
@@ -87,7 +96,7 @@ const DoctorVisit = () => {
 
     const fetchDoctors = async () => {
         try {
-            const res = await fetch('https://clinic-management-system-new.onrender.com/api/doctors');
+            const res = await fetch(`${API_BASE_URL}/api/doctors`);
             const data = await res.json();
             if (data.success) setDoctors(data.doctors);
         } catch (err) {
@@ -97,7 +106,7 @@ const DoctorVisit = () => {
 
     const fetchStudents = async () => {
         try {
-            const res = await fetch('https://clinic-management-system-new.onrender.com/api/students-list');
+            const res = await fetch(`${API_BASE_URL}/api/students-list`);
             const data = await res.json();
             if (data.success) setStudents(data.students);
         } catch (err) {
@@ -107,7 +116,7 @@ const DoctorVisit = () => {
 
     const fetchPrograms = async () => {
         try {
-            const res = await fetch('https://clinic-management-system-new.onrender.com/api/academic-programs');
+            const res = await fetch(`${API_BASE_URL}/api/academic-programs`);
             const data = await res.json();
             if (data.success) setPrograms(data.programs);
         } catch (err) {
@@ -118,7 +127,7 @@ const DoctorVisit = () => {
     const fetchAppointments = async () => {
         setLoading(true);
         try {
-            const res = await fetch('https://clinic-management-system-new.onrender.com/api/doctor-visits');
+            const res = await fetch(`${API_BASE_URL}/api/doctor-visits`);
             const data = await res.json();
             if (data.success) setAppointments(data.appointments);
         } catch (err) {
@@ -141,8 +150,8 @@ const DoctorVisit = () => {
     const handleSaveDoctor = async (e) => {
         e.preventDefault();
         const url = isEditDoctor 
-            ? `https://clinic-management-system-new.onrender.com/api/doctors/${doctorForm.doctor_id}`
-            : 'https://clinic-management-system-new.onrender.com/api/doctors';
+            ? `${API_BASE_URL}/api/doctors/${doctorForm.doctor_id}`
+            : `${API_BASE_URL}/api/doctors`;
         const method = isEditDoctor ? 'PUT' : 'POST';
 
         try {
@@ -246,7 +255,7 @@ const DoctorVisit = () => {
         };
 
         try {
-            const res = await fetch('https://clinic-management-system-new.onrender.com/api/mass-schedules', {
+            const res = await fetch(`${API_BASE_URL}/api/mass-schedules`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
@@ -288,7 +297,7 @@ const DoctorVisit = () => {
     const handleSaveAssessment = async (e) => {
         e.preventDefault();
         try {
-            const res = await fetch('https://clinic-management-system-new.onrender.com/api/doctor-assessments', {
+            const res = await fetch(`${API_BASE_URL}/api/doctor-assessments`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -324,7 +333,7 @@ const DoctorVisit = () => {
     const handleSaveReschedule = async (e) => {
         e.preventDefault();
         try {
-            const res = await fetch(`https://clinic-management-system-new.onrender.com/api/doctor-visits/reschedule/${rescheduleData.appointment_id}`, {
+            const res = await fetch(`${API_BASE_URL}/api/doctor-visits/reschedule/${rescheduleData.appointment_id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -348,7 +357,7 @@ const DoctorVisit = () => {
         if (!window.confirm('Are you sure you want to cancel this doctor visit appointment?')) return;
 
         try {
-            const res = await fetch(`https://clinic-management-system-new.onrender.com/api/doctor-visits/cancel/${appt.appointment_id}`, {
+            const res = await fetch(`${API_BASE_URL}/api/doctor-visits/cancel/${appt.appointment_id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ student_user_id: appt.student_user_id })

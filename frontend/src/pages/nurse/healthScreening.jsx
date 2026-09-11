@@ -5,7 +5,16 @@ import {
 } from 'lucide-react';
 import '../../styles/nurse/HealthScreening.css';
 
-const API_BASE = 'https://clinic-management-system-new.onrender.com/api';
+// API Base URL Configuration (Render primary, Localhost secondary fallback)
+const RENDER_BASE_URL = 'https://clinic-management-system-new.onrender.com';
+const LOCALHOST_BASE_URL = 'http://localhost:3000'; // Adjust port number if your local backend uses another port
+
+// Automatically checks hostname or defaults to Render first
+const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    ? LOCALHOST_BASE_URL
+    : (RENDER_BASE_URL || LOCALHOST_BASE_URL);
+
+const API_BASE = `${API_BASE_URL}/api`;
 
 export default function HealthScreening() {
   const [activeTab, setActiveTab] = useState('upcoming');

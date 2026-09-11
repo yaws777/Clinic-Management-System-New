@@ -8,6 +8,11 @@ import {
 } from 'lucide-react';
 import '../styles/nurse/NurseLayout.css'; 
 
+// API Base URL Configuration (Render first, Localhost fallback)
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 
+                    'https://clinic-management-system-new.onrender.com' || 
+                    'http://localhost:3000';
+
 const NurseLayout = () => {
     const navigate = useNavigate();
     const [isOpen, setIsOpen] = useState(false);
@@ -20,7 +25,7 @@ const NurseLayout = () => {
 
     const fetchUnreadCount = async (userId) => {
         try {
-            const res = await fetch(`https://clinic-management-system-new.onrender.com/api/messages/unread-count/${userId}`);
+            const res = await fetch(`${API_BASE_URL}/api/messages/unread-count/${userId}`);
             const data = await res.json();
             if (data.success) {
                 setUnreadContactsCount(data.unreadCount);
@@ -33,7 +38,7 @@ const NurseLayout = () => {
     useEffect(() => {
         const fetchNurseProfile = async (userId) => {
             try {
-                const response = await fetch(`https://clinic-management-system-new.onrender.com/api/get-nurse/${userId}`);
+                const response = await fetch(`${API_BASE_URL}/api/get-nurse/${userId}`);
                 const data = await response.json();
 
                 if (data.success && data.nurse) {

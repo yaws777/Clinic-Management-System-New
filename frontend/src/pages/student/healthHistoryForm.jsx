@@ -2,6 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../../styles/student/HealthHistoryForm.css';
 
+// API Base URL Configuration (Render primary, Localhost secondary)
+const RENDER_BASE_URL = 'https://clinic-management-system-new.onrender.com';
+const LOCALHOST_BASE_URL = 'http://localhost:3000';
+
+const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    ? LOCALHOST_BASE_URL
+    : (RENDER_BASE_URL || LOCALHOST_BASE_URL);
+
+const API_BASE = `${API_BASE_URL}/api`;
+
 export default function HealthHistoryForm() {
     const navigate = useNavigate();
     const [step, setStep] = useState(1);
@@ -55,7 +65,7 @@ export default function HealthHistoryForm() {
             if (user.role === 'student' && user.student_id) {
                 setStudentId(user.student_id);
             } else {
-                fetch(`https://clinic-management-system-new.onrender.com/api/get-student/${user.id}`)
+                fetch(`${API_BASE}/get-student/${user.id}`)
                     .then(res => res.json())
                     .then(data => {
                         if (data.success && data.student) {
@@ -121,7 +131,7 @@ export default function HealthHistoryForm() {
 
         setErrorMsg('');
         try {
-            const response = await fetch('https://clinic-management-system-new.onrender.com/api/submit-health-form', {
+            const response = await fetch(`${API_BASE}/submit-health-form`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ student_id: studentId, personalInfo, healthInfo, emergencyContact })

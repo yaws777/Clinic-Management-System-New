@@ -15,6 +15,15 @@ import {
 } from 'lucide-react';
 import '../../styles/nurse/DocumentIssuance.css';
 
+// API Base URL Configuration (Render primary, Localhost secondary fallback)
+const RENDER_BASE_URL = 'https://clinic-management-system-new.onrender.com';
+const LOCALHOST_BASE_URL = 'http://localhost:3000'; // Adjust port number if your local backend uses another port
+
+// Automatically checks hostname or defaults to Render first
+const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    ? LOCALHOST_BASE_URL
+    : (RENDER_BASE_URL || LOCALHOST_BASE_URL);
+
 const DocumentIssuance = () => {
     // Get nurse context passed from NurseLayout Outlet
     const { nurseId } = useOutletContext();
@@ -42,7 +51,7 @@ const DocumentIssuance = () => {
     const fetchRequests = async () => {
         setLoading(true);
         try {
-            const response = await fetch('https://clinic-management-system-new.onrender.com/api/document-requests');
+            const response = await fetch(`${API_BASE_URL}/api/document-requests`);
             const data = await response.json();
             if (data.success) {
                 setRequests(data.requests);
@@ -96,7 +105,7 @@ const DocumentIssuance = () => {
     // Fetch notes for a specific request
     const fetchNotes = async (requestType, requestId) => {
         try {
-            const res = await fetch(`https://clinic-management-system-new.onrender.com/api/document-requests/notes/${requestType}/${requestId}`);
+            const res = await fetch(`${API_BASE_URL}/api/document-requests/notes/${requestType}/${requestId}`);
             const data = await res.json();
             if (data.success) {
                 setNotes(data.notes);
@@ -139,7 +148,7 @@ const DocumentIssuance = () => {
         setModalError('');
 
         try {
-            const response = await fetch('https://clinic-management-system-new.onrender.com/api/document-requests/notes', {
+            const response = await fetch(`${API_BASE_URL}/api/document-requests/notes`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -194,7 +203,7 @@ const DocumentIssuance = () => {
         }
 
         try {
-            const response = await fetch('https://clinic-management-system-new.onrender.com/api/document-requests/action', {
+            const response = await fetch(`${API_BASE_URL}/api/document-requests/action`, {
                 method: 'POST',
                 body: formData,
             });
@@ -394,7 +403,7 @@ const DocumentIssuance = () => {
                                         {selectedRequest.student_proof_url && (
                                             <div className="file-attachment">
                                                 <Paperclip size={16} />
-                                                <a href={`https://clinic-management-system-new.onrender.com${selectedRequest.student_proof_url}`} target="_blank" rel="noreferrer">
+                                                <a href={`${API_BASE_URL}${selectedRequest.student_proof_url}`} target="_blank" rel="noreferrer">
                                                     View Student Attachment Proof
                                                 </a>
                                             </div>
@@ -536,7 +545,7 @@ const DocumentIssuance = () => {
                                     {selectedRequest.issued_slip_url && (
                                         <div className="file-attachment mt-2">
                                             <Paperclip size={16} />
-                                            <a href={`https://clinic-management-system-new.onrender.com${selectedRequest.issued_slip_url}`} target="_blank" rel="noreferrer">
+                                            <a href={`${API_BASE_URL}${selectedRequest.issued_slip_url}`} target="_blank" rel="noreferrer">
                                                 View Official Issued Document
                                             </a>
                                         </div>

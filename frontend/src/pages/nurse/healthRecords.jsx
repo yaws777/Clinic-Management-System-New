@@ -3,6 +3,15 @@ import { useNavigate } from 'react-router-dom';
 import { Search, Eye } from 'lucide-react'; 
 import '../../styles/nurse/HealthRecords.css'; 
 
+// API Base URL Configuration (Render primary, Localhost secondary fallback)
+const RENDER_BASE_URL = 'https://clinic-management-system-new.onrender.com';
+const LOCALHOST_BASE_URL = 'http://localhost:3000'; // Adjust port number if your local backend uses another port
+
+// Automatically checks hostname or defaults to Render first
+const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    ? LOCALHOST_BASE_URL
+    : (RENDER_BASE_URL || LOCALHOST_BASE_URL);
+
 export default function HealthRecord() {
     const navigate = useNavigate();
     const [students, setStudents] = useState([]);
@@ -15,7 +24,7 @@ export default function HealthRecord() {
         setErrorMsg('');
         try {
             const queryParams = new URLSearchParams({ search: queryValue }).toString();
-            const response = await fetch(`https://clinic-management-system-new.onrender.com/api/health-records/students?${queryParams}`);
+            const response = await fetch(`${API_BASE_URL}/api/health-records/students?${queryParams}`);
             const data = await response.json();
 
             if (data.success) {

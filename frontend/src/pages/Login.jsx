@@ -3,11 +3,15 @@ import { useNavigate } from 'react-router-dom';
 import { Eye, EyeOff } from 'lucide-react';
 import '../styles/Login.css'; 
 
-// Dynamic API Base definition inside Login.jsx
-const RENDER_URL = 'https://clinic-management-system-new.onrender.com';
-const LOCALHOST_URL = 'http://localhost:3000'; // Update with your local port
+// API Base URL Configuration (Render primary, Localhost secondary)
+const RENDER_BASE_URL = 'https://clinic-management-system-new.onrender.com';
+const LOCALHOST_BASE_URL = 'http://localhost:3000';
 
-const API_BASE = process.env.NODE_ENV === 'production' ? RENDER_URL : LOCALHOST_URL;
+const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    ? LOCALHOST_BASE_URL
+    : (RENDER_BASE_URL || LOCALHOST_BASE_URL);
+
+const API_BASE = `${API_BASE_URL}/api`;
 
 export default function Login() {
     const navigate = useNavigate();
@@ -72,7 +76,7 @@ export default function Login() {
         setSuccessMsg('');
 
         try {
-            const response = await fetch(`${API_BASE}/api/login`, {
+            const response = await fetch(`${API_BASE}/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ username, password })
@@ -161,7 +165,7 @@ export default function Login() {
         }
 
         try {
-            const response = await fetch(`${API_BASE}/api/change-password`, {
+            const response = await fetch(`${API_BASE}/change-password`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ username, newPassword })
@@ -199,7 +203,7 @@ export default function Login() {
         }
 
         try {
-            const response = await fetch(`${API_BASE}/api/update-parent-profile`, {
+            const response = await fetch(`${API_BASE}/update-parent-profile`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -228,7 +232,7 @@ export default function Login() {
         setErrorMsg('');
         setRetrievedPassword('');
         try {
-            const response = await fetch(`${API_BASE}/api/forgot-password`, {
+            const response = await fetch(`${API_BASE}/forgot-password`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ username, firstName, lastName })

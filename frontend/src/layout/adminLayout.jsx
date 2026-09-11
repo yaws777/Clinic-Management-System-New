@@ -7,6 +7,11 @@ import {
 } from 'lucide-react';
 import '../styles/admin/AdminLayout.css'; 
 
+// API Base URL Configuration (Render first, Localhost fallback)
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 
+                     'https://clinic-management-system-new.onrender.com' || 
+                     'http://localhost:3000';
+
 const AdminLayout = () => {
     const navigate = useNavigate();
     const [isOpen, setIsOpen] = useState(false);
@@ -18,7 +23,7 @@ const AdminLayout = () => {
     useEffect(() => {
         const fetchAdminProfile = async (userId) => {
             try {
-                const response = await fetch(`https://clinic-management-system-new.onrender.com/api/get-admin/${userId}`);
+                const response = await fetch(`${API_BASE_URL}/api/get-admin/${userId}`);
                 const data = await response.json();
 
                 if (data.success && data.admin) {

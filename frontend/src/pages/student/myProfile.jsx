@@ -2,6 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../../styles/student/MyProfile.css'; 
 
+// API Base URL Configuration (Render primary, Localhost secondary)
+const RENDER_BASE_URL = 'https://clinic-management-system-new.onrender.com';
+const LOCALHOST_BASE_URL = 'http://localhost:3000';
+
+const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    ? LOCALHOST_BASE_URL
+    : (RENDER_BASE_URL || LOCALHOST_BASE_URL);
+
+const API_BASE = `${API_BASE_URL}/api`;
+
 export default function MyProfile() {
     const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState('personal');
@@ -31,14 +41,14 @@ export default function MyProfile() {
                 }
                 const user = JSON.parse(storedUser);
 
-                const studentRes = await fetch(`https://clinic-management-system-new.onrender.com/api/get-student/${user.id}`);
+                const studentRes = await fetch(`${API_BASE}/get-student/${user.id}`);
                 const studentData = await studentRes.json();
 
                 if (studentData.success) {
                     setStudentId(studentData.student.student_id);
                     setStudentHeader(studentData.student);
 
-                    const profileRes = await fetch(`https://clinic-management-system-new.onrender.com/api/profile/${studentData.student.student_id}`);
+                    const profileRes = await fetch(`${API_BASE}/profile/${studentData.student.student_id}`);
                     const profileData = await profileRes.json();
 
                     if (profileData.success) {
@@ -80,7 +90,7 @@ export default function MyProfile() {
         if (!id) return;
         setReqLoading(true);
         try {
-            const response = await fetch(`https://clinic-management-system-new.onrender.com/api/students/${id}/full-requirements`);
+            const response = await fetch(`${API_BASE}/students/${id}/full-requirements`);
             const data = await response.json();
             if (Array.isArray(data)) {
                 setRequirementsList(data);
@@ -129,7 +139,7 @@ export default function MyProfile() {
             formData.append('file', targetFile);
             formData.append('is_late', isPastDeadline); // Optional flag for backend reference
 
-            const response = await fetch(`https://clinic-management-system-new.onrender.com/api/students/${studentId}/requirements/${encodeURIComponent(reqName)}/submit`, {
+            const response = await fetch(`${API_BASE}/students/${studentId}/requirements/${encodeURIComponent(reqName)}/submit`, {
                 method: 'POST',
                 // Content-Type header omitted: let browser establish the multi-part boundary string automatically
                 body: formData
@@ -157,7 +167,7 @@ export default function MyProfile() {
         setSuccessMsg('');
 
         try {
-            const response = await fetch('https://clinic-management-system-new.onrender.com/api/update-profile', {
+            const response = await fetch(`${API_BASE}/update-profile`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
