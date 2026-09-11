@@ -63,17 +63,16 @@ const pool = mysql.createPool({
   dateStrings: true
 }); */
 
-
 const pool = mysql.createPool({
-        host: "localhost",
-        user: "root",
-        password: "Yahweh0512",
-        database: "ClinicManagementSystem",
+        host: process.env.LOCAL_DB_HOST,
+        user: process.env.LOCAL_DB_USER,
+        password: process.env.LOCAL_DB_PASSWORD,
+        database: process.env.LOCAL_DB_NAME,
         dateStrings: true,
-        port: 3306
+        port: Number(process.env.LOCAL_DB_PORT)
 });
 
-
+const port = process.env.PORT || 3001; // Use environment variable PORT or default to 3001
 
 /**
  * Formats and validates a Philippine mobile number into the '639XXXXXXXXX' standard.
@@ -5963,4 +5962,4 @@ app.delete('/api/messages/conversations/:userId/:contactId', async (req, res) =>
     }
 });
 
-app.listen(3001, () => console.log('Server running on port 3001'));
+app.listen(port, () => console.log(`Server running on port ${port}`));
