@@ -3,16 +3,6 @@ import { useOutletContext } from 'react-router-dom';
 import { User, Save, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
 import '../../styles/parent/MyProfile.css';
 
-// API Base URL Configuration (Render primary, Localhost secondary)
-const RENDER_BASE_URL = 'https://clinic-management-system-new.onrender.com';
-const LOCALHOST_BASE_URL = 'http://localhost:3000';
-
-const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-    ? LOCALHOST_BASE_URL
-    : (RENDER_BASE_URL || LOCALHOST_BASE_URL);
-
-const API_BASE = `${API_BASE_URL}/api`;
-
 const MyProfile = () => {
   // Retrieve parentId from parentLayout.jsx outlet context
   const context = useOutletContext();
@@ -40,7 +30,7 @@ const MyProfile = () => {
 
     const fetchProfile = async () => {
       try {
-        const response = await fetch(`${API_BASE}/parents/${parentId}`);
+        const response = await fetch(`https://clinic-management-system-new.onrender.com/api/parents/${parentId}`);
         const data = await response.json();
 
         if (response.ok && data.success) {
@@ -83,7 +73,7 @@ const MyProfile = () => {
     setSaving(true);
 
     try {
-      const response = await fetch(`${API_BASE}/parents/${parentId}`, {
+      const response = await fetch(`https://clinic-management-system-new.onrender.com/api/parents/${parentId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

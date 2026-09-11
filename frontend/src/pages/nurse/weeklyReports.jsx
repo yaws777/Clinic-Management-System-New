@@ -20,16 +20,6 @@ import {
 } from 'recharts';
 import '../../styles/nurse/WeeklyReports.css';
 
-// API Base URL Configuration (Render primary, Localhost secondary)
-const RENDER_BASE_URL = 'https://clinic-management-system-new.onrender.com';
-const LOCALHOST_BASE_URL = 'http://localhost:3000';
-
-const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-    ? LOCALHOST_BASE_URL
-    : (RENDER_BASE_URL || LOCALHOST_BASE_URL);
-
-const API_BASE = `${API_BASE_URL}/api`;
-
 const WeeklyReports = () => {
   const [weekOffset, setWeekOffset] = useState(0);
   const [reportData, setReportData] = useState({
@@ -85,7 +75,7 @@ const WeeklyReports = () => {
     return `${offset} weeks ago`;
   };
 
-  // Fetching data using API_BASE configuration
+  // Fetching data using native fetch API directly to http://localhost:3001
   const fetchWeeklyData = useCallback(async () => {
     setLoading(true);
     setErrorMessage('');
@@ -95,7 +85,7 @@ const WeeklyReports = () => {
         endDate: weekInfo.endDate
       }).toString();
 
-      const response = await fetch(`${API_BASE}/weekly-reports?${queryParams}`);
+      const response = await fetch(`https://clinic-management-system-new.onrender.com/api/weekly-reports?${queryParams}`);
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));

@@ -19,17 +19,6 @@ import {
 } from 'lucide-react';
 import '../../styles/nurse/IncidentReports.css';
 
-// API Base URL Configuration (Render primary, Localhost secondary fallback)
-const RENDER_BASE_URL = 'https://clinic-management-system-new.onrender.com';
-const LOCALHOST_BASE_URL = 'http://localhost:3000'; // Adjust port if your local backend uses a different port
-
-// Automatically checks hostname or defaults to Render first
-const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-    ? LOCALHOST_BASE_URL
-    : (RENDER_BASE_URL || LOCALHOST_BASE_URL);
-
-const API_BASE = `${API_BASE_URL}/api`;
-
 const IncidentReport = () => {
     // 1. Get nurseId from NurseLayout Outlet context
     const { nurseId } = useOutletContext() || {};
@@ -77,7 +66,7 @@ const IncidentReport = () => {
             if (searchQuery) params.append('search', searchQuery);
             if (dateFilter) params.append('date', dateFilter);
 
-            const res = await fetch(`${API_BASE}/incident-reports?${params.toString()}`);
+            const res = await fetch(`https://clinic-management-system-new.onrender.com/api/incident-reports?${params.toString()}`);
             const data = await res.json();
             if (data.success) {
                 setReports(data.reports);
@@ -92,7 +81,7 @@ const IncidentReport = () => {
     // Fetch Emergency Hotlines
     const fetchHotlines = useCallback(async () => {
         try {
-            const res = await fetch(`${API_BASE}/emergency-hotlines`);
+            const res = await fetch(`https://clinic-management-system-new.onrender.com/api/emergency-hotlines`);
             const data = await res.json();
             if (data.success) {
                 setHotlines(data.hotlines);
@@ -119,7 +108,7 @@ const IncidentReport = () => {
 
         if (query.trim().length > 0) {
             try {
-                const url = `${API_BASE}/incident-reports/students?q=${encodeURIComponent(query.trim())}`;
+                const url = `https://clinic-management-system-new.onrender.com/api/incident-reports/students?q=${encodeURIComponent(query.trim())}`;
                 console.log('[Frontend] Searching students:', url);
 
                 const res = await fetch(url);
@@ -177,7 +166,7 @@ const IncidentReport = () => {
                 ...incidentData
             };
 
-            const res = await fetch(`${API_BASE}/incident-reports`, {
+            const res = await fetch(`https://clinic-management-system-new.onrender.com/api/incident-reports`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
@@ -216,8 +205,8 @@ const IncidentReport = () => {
         e.preventDefault();
         const method = editingHotlineId ? 'PUT' : 'POST';
         const endpoint = editingHotlineId 
-            ? `${API_BASE}/emergency-hotlines/${editingHotlineId}`
-            : `${API_BASE}/emergency-hotlines`;
+            ? `https://clinic-management-system-new.onrender.com/api/emergency-hotlines/${editingHotlineId}`
+            : `https://clinic-management-system-new.onrender.com/api/emergency-hotlines`;
 
         try {
             const res = await fetch(endpoint, {
@@ -249,7 +238,7 @@ const IncidentReport = () => {
     const handleDeleteHotline = async (hotline_id) => {
         if (!window.confirm('Are you sure you want to delete this emergency contact?')) return;
         try {
-            const res = await fetch(`${API_BASE}/emergency-hotlines/${hotline_id}`, { method: 'DELETE' });
+            const res = await fetch(`https://clinic-management-system-new.onrender.com/api/emergency-hotlines/${hotline_id}`, { method: 'DELETE' });
             const data = await res.json();
             if (data.success) fetchHotlines();
         } catch (error) {
@@ -633,4 +622,4 @@ const IncidentReport = () => {
     );
 };
 
-export default IncidentReport;
+export default IncidentReport;  

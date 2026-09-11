@@ -11,11 +11,6 @@ import {
 } from 'lucide-react';
 import '../styles/parent/ParentLayout.css'; 
 
-// API Base URL Configuration (Render first, Localhost fallback)
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 
-                     'https://clinic-management-system-new.onrender.com' || 
-                     'http://localhost:3000';
-
 const ParentLayout = () => {
     const navigate = useNavigate();
     const [isOpen, setIsOpen] = useState(false);
@@ -44,7 +39,7 @@ const ParentLayout = () => {
         const fetchProfiles = async (userId) => {
             try {
                 // 1. Fetch Parent Data
-                const parentRes = await fetch(`${API_BASE_URL}/api/get-parent/${userId}`);
+                const parentRes = await fetch(`https://clinic-management-system-new.onrender.com/api/get-parent/${userId}`);
                 const parentJson = await parentRes.json();
 
                 if (parentJson.success && parentJson.parent) {
@@ -56,7 +51,7 @@ const ParentLayout = () => {
                 // 2. Fetch Selected Child Data
                 const selectedStudentId = localStorage.getItem('selectedStudentId');
                 if (selectedStudentId) {
-                    const childRes = await fetch(`${API_BASE_URL}/api/get-student-by-studentId/${selectedStudentId}`);
+                    const childRes = await fetch(`https://clinic-management-system-new.onrender.com/api/get-student-by-studentId/${selectedStudentId}`);
                     const childJson = await childRes.json();
                     
                     if (childJson.success && childJson.student) {

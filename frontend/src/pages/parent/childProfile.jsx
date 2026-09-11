@@ -2,16 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useOutletContext, useNavigate } from 'react-router-dom';
 import '../../styles/parent/ChildProfile.css';
 
-// API Base URL Configuration (Render primary, Localhost secondary)
-const RENDER_BASE_URL = 'https://clinic-management-system-new.onrender.com';
-const LOCALHOST_BASE_URL = 'http://localhost:3000';
-
-const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-    ? LOCALHOST_BASE_URL
-    : (RENDER_BASE_URL || LOCALHOST_BASE_URL);
-
-const API_BASE = `${API_BASE_URL}/api`;
-
 export default function ChildProfile() {
     const navigate = useNavigate();
     
@@ -51,14 +41,14 @@ export default function ChildProfile() {
 
             try {
                 // Fetch Student Header Details
-                const studentRes = await fetch(`${API_BASE}/get-student-by-studentId/${studentId}`);
+                const studentRes = await fetch(`https://clinic-management-system-new.onrender.com/api/get-student-by-studentId/${studentId}`);
                 const studentData = await studentRes.json();
 
                 if (studentData.success) {
                     setStudentHeader(studentData.student);
 
                     // Fetch Profile Data (Personal, Health, Emergency)
-                    const profileRes = await fetch(`${API_BASE}/profile/${studentId}`);
+                    const profileRes = await fetch(`https://clinic-management-system-new.onrender.com/api/profile/${studentId}`);
                     const profileData = await profileRes.json();
 
                     if (profileData.success) {
@@ -102,7 +92,7 @@ export default function ChildProfile() {
             if (activeTab !== 'requirements' || !studentId) return;
             setReqLoading(true);
             try {
-                const response = await fetch(`${API_BASE}/students/${studentId}/full-requirements`);
+                const response = await fetch(`https://clinic-management-system-new.onrender.com/api/students/${studentId}/full-requirements`);
                 const data = await response.json();
                 if (Array.isArray(data)) {
                     setRequirementsList(data);

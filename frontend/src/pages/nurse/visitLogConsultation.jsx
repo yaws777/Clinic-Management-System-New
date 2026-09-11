@@ -3,16 +3,6 @@ import { useOutletContext } from 'react-router-dom';
 import { Search, User, Activity, ShieldAlert, Clock, XCircle, Eye } from 'lucide-react';
 import '../../styles/nurse/VisitLogConsultation.css';
 
-// API Base URL Configuration (Render primary, Localhost secondary)
-const RENDER_BASE_URL = 'https://clinic-management-system-new.onrender.com';
-const LOCALHOST_BASE_URL = 'http://localhost:3000';
-
-const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-    ? LOCALHOST_BASE_URL
-    : (RENDER_BASE_URL || LOCALHOST_BASE_URL);
-
-const API_BASE = `${API_BASE_URL}/api`;
-
 const MEASURED_UNITS = ['mg', 'g', 'mcg', 'mL', 'L'];
 
 const VisitLogConsultation = () => {
@@ -55,7 +45,7 @@ const VisitLogConsultation = () => {
 
     const fetchComplaints = async () => {
         try {
-            const res = await fetch(`${API_BASE}/chief-complaints`);
+            const res = await fetch('https://clinic-management-system-new.onrender.com/api/chief-complaints');
             const data = await res.json();
             setComplaints(Array.isArray(data) ? data : []);
         } catch (err) { 
@@ -66,7 +56,7 @@ const VisitLogConsultation = () => {
 
     const fetchBatches = async () => {
         try {
-            const res = await fetch(`${API_BASE}/inventory/batches`);
+            const res = await fetch('https://clinic-management-system-new.onrender.com/api/inventory/batches');
             const data = await res.json();
             setBatches(Array.isArray(data) ? data : []);
         } catch (err) { 
@@ -77,7 +67,7 @@ const VisitLogConsultation = () => {
 
     const fetchHistory = async () => {
         try {
-            const res = await fetch(`${API_BASE}/clinic-visits`);
+            const res = await fetch('https://clinic-management-system-new.onrender.com/api/clinic-visits');
             const data = await res.json();
             setHistory(Array.isArray(data) ? data : []);
         } catch (err) { 
@@ -93,7 +83,7 @@ const VisitLogConsultation = () => {
             return;
         }
         try {
-            const res = await fetch(`${API_BASE}/students/search?query=${val}`);
+            const res = await fetch(`https://clinic-management-system-new.onrender.com/api/students/search?query=${val}`);
             const data = await res.json();
             setStudents(Array.isArray(data) ? data : []);
         } catch (err) { 
@@ -215,7 +205,7 @@ const VisitLogConsultation = () => {
         };
 
         try {
-            const res = await fetch(`${API_BASE}/clinic-visits`, {
+            const res = await fetch('http://localhost:3001/api/clinic-visits', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(submissionPayload)
@@ -243,7 +233,7 @@ const VisitLogConsultation = () => {
         }
 
         try {
-            const res = await fetch(`${API_BASE}/clinic-visits/${visitId}/timeout`, {
+            const res = await fetch(`http://localhost:3001/api/clinic-visits/${visitId}/timeout`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ time_out: timeOutVal })

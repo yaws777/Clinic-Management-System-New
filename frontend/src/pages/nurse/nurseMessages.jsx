@@ -6,16 +6,6 @@ import {
 } from 'lucide-react';
 import '../../styles/nurse/NurseMessages.css';
 
-// API Base URL Configuration (Render primary, Localhost secondary fallback)
-const RENDER_BASE_URL = 'https://clinic-management-system-new.onrender.com';
-const LOCALHOST_BASE_URL = 'http://localhost:3000';
-
-const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-    ? LOCALHOST_BASE_URL
-    : (RENDER_BASE_URL || LOCALHOST_BASE_URL);
-
-const API_BASE = `${API_BASE_URL}/api`;
-
 const NurseMessages = () => {
     const { userId, refreshUnreadCount } = useOutletContext();
     const [conversations, setConversations] = useState([]);
@@ -51,7 +41,7 @@ const NurseMessages = () => {
     const fetchConversations = useCallback(async () => {
         if (!userId) return;
         try {
-            const res = await fetch(`${API_BASE}/messages/conversations/${userId}`);
+            const res = await fetch(`https://clinic-management-system-new.onrender.com/api/messages/conversations/${userId}`);
             const data = await res.json();
             if (data.success) {
                 setConversations(data.conversations);
@@ -74,7 +64,7 @@ const NurseMessages = () => {
             return;
         }
         try {
-            const res = await fetch(`${API_BASE}/messages/contacts?search=${encodeURIComponent(query)}`);
+            const res = await fetch(`https://clinic-management-system-new.onrender.com/api/messages/contacts?search=${encodeURIComponent(query)}`);
             const data = await res.json();
             if (data.success) {
                 setSearchResults(data.contacts);
@@ -97,7 +87,7 @@ const NurseMessages = () => {
         fetchChatHistory(contactUserId);
 
         try {
-            await fetch(`${API_BASE}/messages/read/${userId}/${contactUserId}`, { method: 'PUT' });
+            await fetch(`https://clinic-management-system-new.onrender.com/api/messages/read/${userId}/${contactUserId}`, { method: 'PUT' });
             fetchConversations();
             if (refreshUnreadCount) refreshUnreadCount();
         } catch (err) {
@@ -107,7 +97,7 @@ const NurseMessages = () => {
 
     const fetchChatHistory = async (contactUserId) => {
         try {
-            const res = await fetch(`${API_BASE}/messages/history/${userId}/${contactUserId}`);
+            const res = await fetch(`https://clinic-management-system-new.onrender.com/api/messages/history/${userId}/${contactUserId}`);
             const data = await res.json();
             if (data.success) {
                 setMessages(data.messages);
@@ -122,7 +112,7 @@ const NurseMessages = () => {
         if (!window.confirm('Unsend this message?')) return;
 
         try {
-            const res = await fetch(`${API_BASE}/messages/${messageId}`, {
+            const res = await fetch(`https://clinic-management-system-new.onrender.com/api/messages/${messageId}`, {
                 method: 'DELETE'
             });
             const data = await res.json();
@@ -146,7 +136,7 @@ const NurseMessages = () => {
         if (!window.confirm('Delete this conversation? This cannot be undone.')) return;
 
         try {
-            const res = await fetch(`${API_BASE}/messages/conversations/${userId}/${contactUserId}`, {
+            const res = await fetch(`https://clinic-management-system-new.onrender.com/api/messages/conversations/${userId}/${contactUserId}`, {
                 method: 'DELETE'
             });
             const data = await res.json();
@@ -241,7 +231,7 @@ const NurseMessages = () => {
         }
 
         try {
-            const res = await fetch(`${API_BASE}/messages/send`, {
+            const res = await fetch('https://clinic-management-system-new.onrender.com/api/messages/send', {
                 method: 'POST',
                 body: formData
             });
@@ -402,19 +392,19 @@ const NurseMessages = () => {
                                                     {msg.content && <p>{msg.content}</p>}
                                                     
                                                     {msg.message_type === 'image' && msg.media_url && (
-                                                        <img src={`${API_BASE_URL}${msg.media_url}`} alt="attachment" className="chat-image-preview" />
+                                                        <img src={`http://localhost:3001${msg.media_url}`} alt="attachment" className="chat-image-preview" />
                                                     )}
                                                     
                                                     {msg.message_type === 'video' && msg.media_url && (
-                                                        <video controls src={`${API_BASE_URL}${msg.media_url}`} className="chat-video-preview" />
+                                                        <video controls src={`http://localhost:3001${msg.media_url}`} className="chat-video-preview" />
                                                     )}
 
                                                     {msg.message_type === 'audio' && msg.media_url && (
-                                                        <audio controls src={`${API_BASE_URL}${msg.media_url}`} />
+                                                        <audio controls src={`http://localhost:3001${msg.media_url}`} />
                                                     )}
 
                                                     {msg.message_type === 'file' && msg.media_url && (
-                                                        <a href={`${API_BASE_URL}${msg.media_url}`} target="_blank" rel="noreferrer" className="file-attachment-link">
+                                                        <a href={`http://localhost:3001${msg.media_url}`} target="_blank" rel="noreferrer" className="file-attachment-link">
                                                             <FileText size={16} /> Download File
                                                         </a>
                                                     )}

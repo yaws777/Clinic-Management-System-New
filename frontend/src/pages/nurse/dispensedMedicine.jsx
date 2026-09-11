@@ -3,13 +3,6 @@ import { useOutletContext } from 'react-router-dom';
 import { Search, Pill, Calendar, History, PlusCircle, RefreshCw, CheckCircle, AlertTriangle, Filter, X } from 'lucide-react';
 import '../../styles/nurse/DispensedMedicine.css';
 
-// API Base URL Configuration (Render first, Localhost fallback)
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 
-                     'https://clinic-management-system-new.onrender.com' || 
-                     'http://localhost:3000';
-
-const API_BASE = `${API_BASE_URL}/api`;
-
 const MEASURED_UNITS = ['mg', 'g', 'mcg', 'mL', 'L'];
 
 const DispensedMedicine = () => {
@@ -48,7 +41,7 @@ const DispensedMedicine = () => {
 
   const fetchInventory = useCallback(async () => {
     try {
-      const res = await fetch(`${API_BASE}/inventory/batches`);
+      const res = await fetch('https://clinic-management-system-new.onrender.com/api/inventory/batches');
       if (!res.ok) throw new Error(`HTTP status ${res.status}`);
       const data = await res.json();
       setInventory(Array.isArray(data) ? data : []);
@@ -71,7 +64,7 @@ const DispensedMedicine = () => {
       if (st) params.append('student', st);
       if (med) params.append('medicine', med);
 
-      const res = await fetch(`${API_BASE}/dispensation/history?${params.toString()}`);
+      const res = await fetch(`https://clinic-management-system-new.onrender.com/api/dispensation/history?${params.toString()}`);
       if (!res.ok) throw new Error(`Server returned status ${res.status}`);
       const data = await res.json();
       setHistory(Array.isArray(data) ? data : []);
@@ -91,7 +84,7 @@ const DispensedMedicine = () => {
   // Student Search Lookup Effect
   useEffect(() => {
     if (searchStudent.trim().length > 1 && !selectedStudent) {
-      fetch(`${API_BASE}/students/direct?search=${encodeURIComponent(searchStudent)}`)
+      fetch(`https://clinic-management-system-new.onrender.com/api/students/direct?search=${encodeURIComponent(searchStudent)}`)
         .then((res) => {
           if (!res.ok) throw new Error(`HTTP ${res.status}`);
           return res.json();
@@ -212,7 +205,7 @@ const DispensedMedicine = () => {
     }
 
     try {
-      const response = await fetch(`${API_BASE}/dispensation`, {
+      const response = await fetch('http://localhost:3001/api/dispensation', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

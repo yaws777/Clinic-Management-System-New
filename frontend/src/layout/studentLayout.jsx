@@ -13,11 +13,6 @@ import {
 import '../styles/student/StudentLayout.css'; 
 import StudentMessageModal from '../components/student/StudentMessageModal.jsx';
 
-// API Base URL Configuration (Render first, Localhost fallback)
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 
-                     'https://clinic-management-system-new.onrender.com' || 
-                     'http://localhost:3000';
-
 const StudentLayout = () => {
     const navigate = useNavigate();
     const [isOpen, setIsOpen] = useState(false);
@@ -33,7 +28,7 @@ const StudentLayout = () => {
     const fetchUnreadCount = useCallback(async (userId) => {
         if (!userId) return;
         try {
-            const res = await fetch(`${API_BASE_URL}/api/messages/unread-count/${userId}`);
+            const res = await fetch(`https://clinic-management-system-new.onrender.com/api/messages/unread-count/${userId}`);
             const data = await res.json();
             if (data.success) {
                 setUnreadCount(data.unreadCount || 0);
@@ -46,7 +41,7 @@ const StudentLayout = () => {
     useEffect(() => {
         const fetchStudentProfile = async (userId) => {
             try {
-                const response = await fetch(`${API_BASE_URL}/api/get-student/${userId}`);
+                const response = await fetch(`https://clinic-management-system-new.onrender.com/api/get-student/${userId}`);
                 const data = await response.json();
 
                 if (data.success && data.student) {

@@ -2,15 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import '../../styles/student/RequestModule.css';
 
-// API Base URL Configuration (Render primary, Localhost secondary)
-const RENDER_BASE_URL = 'https://clinic-management-system-new.onrender.com';
-const LOCALHOST_BASE_URL = 'http://localhost:3000';
-
-const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-    ? LOCALHOST_BASE_URL
-    : (RENDER_BASE_URL || LOCALHOST_BASE_URL);
-
-const API_BASE = `${API_BASE_URL}/api/requests`;
+const API_BASE = 'https://clinic-management-system-new.onrender.com/api/requests';
 
 export default function RequestModule() {
   // Extract studentId directly from StudentLayout context
@@ -360,7 +352,7 @@ export default function RequestModule() {
                     {selectedRequest.student_proof_url && (
                       <p>
                         <strong>Attachment:</strong>{' '}
-                        <a href={`${API_BASE_URL}${selectedRequest.student_proof_url}`} target="_blank" rel="noreferrer">
+                        <a href={`http://localhost:3001${selectedRequest.student_proof_url}`} target="_blank" rel="noreferrer">
                           View Uploaded Proof
                         </a>
                       </p>
@@ -376,7 +368,7 @@ export default function RequestModule() {
                 {selectedRequest.issued_slip_url ? (
                   <p className="sti-issued-link">
                     <strong>Issued Slip Document:</strong>{' '}
-                    <a href={`${API_BASE_URL}${selectedRequest.issued_slip_url}`} target="_blank" rel="noreferrer">
+                    <a href={`http://localhost:3001${selectedRequest.issued_slip_url}`} target="_blank" rel="noreferrer">
                       📄 Download Issued Slip
                     </a>
                   </p>

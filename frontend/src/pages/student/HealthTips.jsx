@@ -2,16 +2,6 @@
 import React, { useState, useEffect } from 'react';
 import '../../styles/student/HealthTipsModule.css';
 
-// API Base URL Configuration (Render primary, Localhost secondary)
-const RENDER_BASE_URL = 'https://clinic-management-system-new.onrender.com';
-const LOCALHOST_BASE_URL = 'http://localhost:5000';
-
-const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-    ? LOCALHOST_BASE_URL
-    : (RENDER_BASE_URL || LOCALHOST_BASE_URL);
-
-const API_BASE = `${API_BASE_URL}/api`;
-
 // Complete dictionary for all complaints
 const TIPS_DICTIONARY = {
   ASTHMAATTACK02000: {
@@ -231,7 +221,7 @@ const HealthTips = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(`${API_BASE}/all-chief-complaints`);
+      const response = await fetch('https://clinic-management-system-new.onrender.com/api/all-chief-complaints');
       const data = await response.json();
 
       if (data.success) {
@@ -241,7 +231,7 @@ const HealthTips = () => {
       }
     } catch (err) {
       console.error('Fetch error:', err);
-      setError('Unable to reach server. Please check your network connection or server status.');
+      setError('Unable to reach server. Please ensure localhost:3001 is running.');
     } finally {
       setLoading(false);
     }

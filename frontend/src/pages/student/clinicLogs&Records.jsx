@@ -13,15 +13,7 @@ import {
 } from 'lucide-react';
 import '../../styles/student/ClinicLogs&Records.css';
 
-// API Base URL Configuration (Render primary, Localhost secondary)
-const RENDER_BASE_URL = 'https://clinic-management-system-new.onrender.com';
-const LOCALHOST_BASE_URL = 'http://localhost:3000';
-
-const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-    ? LOCALHOST_BASE_URL
-    : (RENDER_BASE_URL || LOCALHOST_BASE_URL);
-
-const API_BASE = `${API_BASE_URL}/api`;
+const API_BASE = 'https://clinic-management-system-new.onrender.com';
 
 // Safe date formatter to avoid UTC offset shifts
 const formatDate = (dateStr) => {

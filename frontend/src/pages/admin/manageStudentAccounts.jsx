@@ -17,12 +17,7 @@ import {
 } from 'lucide-react';
 import '../../styles/admin/ManageStudentAccounts.css';
 
-// API Base URL Configuration (Render first, Localhost fallback)
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 
-                     'https://clinic-management-system-new.onrender.com' || 
-                     'http://localhost:3000';
-
-const API_BASE = `${API_BASE_URL}/api`;
+const API_BASE = 'https://clinic-management-system-new.onrender.com/api';
 
 export default function ManageStudentAccounts() {
   const [students, setStudents] = useState([]);
