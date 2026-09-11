@@ -3,6 +3,27 @@ import { useNavigate } from 'react-router-dom';
 import { Eye, EyeOff } from 'lucide-react';
 import '../styles/Login.css'; 
 
+// Base URL configured in one place for easy environment switching
+const BASE_URL = 'https://clinic-management-system-new.onrender.com/api';
+
+// Reusable generic fetch wrapper handling headers, JSON parsing, and basic error handling
+const apiCall = async (endpoint, payload) => {
+    const response = await fetch(`${BASE_URL}${endpoint}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+    });
+    return await response.json();
+};
+
+// Encapsulated API Service Object for the Login Page
+const authApi = {
+    login: (credentials) => apiCall('/login', credentials),
+    changePassword: (data) => apiCall('/change-password', data),
+    updateParentProfile: (data) => apiCall('/update-parent-profile', data),
+    forgotPassword: (data) => apiCall('/forgot-password', data),
+};
+
 export default function Login() {
     const navigate = useNavigate();
     const [isLoginView, setIsLoginView] = useState(true);
@@ -66,12 +87,7 @@ export default function Login() {
         setSuccessMsg('');
 
         try {
-            const response = await fetch('https://clinic-management-system-new.onrender.com/api/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, password })
-            });
-            const data = await response.json();
+            const data = await authApi.login({ username, password });
             
             if (data.success) {
                 // STEP 1 & 2: Check for Default Password ("123")
@@ -155,12 +171,7 @@ export default function Login() {
         }
 
         try {
-            const response = await fetch('https://clinic-management-system-new.onrender.com/api/change-password', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, newPassword })
-            });
-            const data = await response.json();
+            const data = await authApi.changePassword({ username, newPassword });
 
             if (data.success) {
                 setShowChangePassModal(false);
@@ -193,17 +204,12 @@ export default function Login() {
         }
 
         try {
-            const response = await fetch('https://clinic-management-system-new.onrender.com/api/update-parent-profile', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    parentId: pendingAuthData.user.parent_id,
-                    firstName: parentFirstName,
-                    lastName: parentLastName,
-                    primaryPhone: parentPhone.replace(/[\s\-()]/g, '')
-                })
+            const data = await authApi.updateParentProfile({
+                parentId: pendingAuthData.user.parent_id,
+                firstName: parentFirstName,
+                lastName: parentLastName,
+                primaryPhone: parentPhone.replace(/[\s\-()]/g, '')
             });
-            const data = await response.json();
 
             if (data.success) {
                 setShowParentModal(false);
@@ -222,12 +228,7 @@ export default function Login() {
         setErrorMsg('');
         setRetrievedPassword('');
         try {
-            const response = await fetch('https://clinic-management-system-new.onrender.com/api/forgot-password', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, firstName, lastName })
-            });
-            const data = await response.json();
+            const data = await authApi.forgotPassword({ username, firstName, lastName });
             
             if (data.success) {
                 setRetrievedPassword(`Your password is: ${data.password}`);

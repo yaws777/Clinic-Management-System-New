@@ -53,7 +53,7 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-
+/*
 const pool = mysql.createPool({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
@@ -61,9 +61,8 @@ const pool = mysql.createPool({
   database: process.env.DB_NAME,
   port: Number(process.env.DB_PORT),
   dateStrings: true
-}); 
+}); */
 
-/*
 const pool = mysql.createPool({
         host: process.env.LOCAL_DB_HOST,
         user: process.env.LOCAL_DB_USER,
@@ -72,7 +71,6 @@ const pool = mysql.createPool({
         dateStrings: true,
         port: Number(process.env.LOCAL_DB_PORT)
 });
-*/
 
 const port = process.env.PORT || 3001; // Use environment variable PORT or default to 3001
 
